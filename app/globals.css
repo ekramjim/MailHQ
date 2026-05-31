@@ -1,0 +1,129 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 9%;
+
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 162 72% 40%;
+
+    --muted: 0 0% 96%;
+    --muted-foreground: 0 0% 45%;
+
+    --accent: 0 0% 96%;
+    --accent-foreground: 0 0% 9%;
+
+    /* Mint */
+    --mint: 162 72% 40%;
+    --mint-foreground: 0 0% 100%;
+    --mint-subtle: 162 60% 94%;
+    --mint-border: 162 50% 75%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 98%;
+  }
+
+  .dark {
+    --background: 0 0% 7%;
+    --foreground: 0 0% 95%;
+
+    --card: 0 0% 10%;
+    --card-foreground: 0 0% 95%;
+
+    --border: 0 0% 16%;
+    --input: 0 0% 16%;
+    --ring: 162 72% 50%;
+
+    --muted: 0 0% 14%;
+    --muted-foreground: 0 0% 55%;
+
+    --accent: 0 0% 14%;
+    --accent-foreground: 0 0% 95%;
+
+    /* Mint — brighter in dark mode */
+    --mint: 162 72% 50%;
+    --mint-foreground: 0 0% 0%;
+    --mint-subtle: 162 40% 10%;
+    --mint-border: 162 50% 25%;
+
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 98%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-heading font-bold tracking-tight;
+  }
+}
+
+@layer components {
+  .card {
+    @apply bg-card border border-border rounded-xl shadow-sm;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-4 py-2 text-sm font-medium transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+
+  .btn-primary {
+    @apply btn shadow-sm;
+    background-color: hsl(var(--mint));
+    color: hsl(var(--mint-foreground));
+  }
+
+  .btn-primary:hover {
+    opacity: 0.9;
+  }
+
+  .btn-secondary {
+    @apply btn bg-card border border-border hover:bg-muted shadow-sm;
+  }
+
+  .btn-ghost {
+    @apply btn hover:bg-muted;
+  }
+
+  .btn-destructive {
+    @apply btn bg-destructive text-destructive-foreground hover:opacity-90;
+  }
+
+  .input {
+    @apply w-full rounded-lg border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-all;
+  }
+
+  .label {
+    @apply text-sm font-medium text-foreground;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium;
+  }
+
+  .badge-mint {
+    @apply badge border;
+    background-color: hsl(var(--mint-subtle));
+    color: hsl(var(--mint));
+    border-color: hsl(var(--mint-border));
+  }
+
+  .badge-muted {
+    @apply badge bg-muted text-muted-foreground;
+  }
+}
