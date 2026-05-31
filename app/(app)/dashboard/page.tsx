@@ -14,7 +14,7 @@ export default function DashboardPage() {
         ].map((stat) => (
           <div key={stat.label} className="card p-6 flex flex-col gap-1">
             <span className="text-sm text-muted-foreground font-medium">{stat.label}</span>
-            <span className="text-4xl font-bold font-heading text-mint">{stat.value}</span>
+            <span className="text-4xl font-bold font-heading text-cyan-500">{stat.value}</span>
           </div>
         ))}
       </div>
