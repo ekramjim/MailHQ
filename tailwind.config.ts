@@ -17,26 +17,11 @@ const config: Config = {
           foreground: "hsl(var(--card-foreground))",
         },
         border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
         },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        mint: {
-          DEFAULT: "hsl(var(--mint))",
-          foreground: "hsl(var(--mint-foreground))",
-          subtle: "hsl(var(--mint-subtle))",
-          border: "hsl(var(--mint-border))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
+        destructive: "hsl(var(--destructive))",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "sans-serif"],
