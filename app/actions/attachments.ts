@@ -36,7 +36,6 @@ export async function uploadAttachment(formData: FormData) {
   const file = formData.get("file") as File;
   if (!file) throw new Error("No file provided");
 
-  const ext = file.name.split(".").pop();
   const path = `${userId}/${Date.now()}-${file.name}`;
 
   const { error: uploadError } = await supabase.storage

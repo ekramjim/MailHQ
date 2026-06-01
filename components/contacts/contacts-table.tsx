@@ -2,11 +2,9 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { Pencil, Trash2, Plus, Upload, Search, X } from "lucide-react";
-
 import { deleteContact, type Contact } from "@/app/actions/contacts";
 import { ContactForm } from "./contact-form";
 import { CSVImport } from "./csv-import";
-import { cn } from "@/lib/utils";
 
 
 type Modal = { type: "add" } | { type: "edit"; contact: Contact } | { type: "csv" } | null;

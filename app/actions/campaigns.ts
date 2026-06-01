@@ -86,7 +86,7 @@ export async function getCampaign(id: string) {
 }
 
 export async function getCampaignRecipients(campaignId: string) {
-  const { supabase, userId } = await getClient();
+  const { supabase } = await getClient();
 
   const { data, error } = await supabase
     .from("sends")
