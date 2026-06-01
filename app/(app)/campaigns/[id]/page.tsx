@@ -5,6 +5,8 @@ import { getCampaign, getCampaignRecipients } from "@/app/actions/campaigns";
 import { getAttachments } from "@/app/actions/attachments";
 import { CampaignDetailClient } from "@/components/campaigns/campaign-detail-client";
 import { CampaignSendWrapper } from "@/components/campaigns/campaign-send-wrapper";
+import { OutcomeSelect } from "@/components/campaigns/outcome-select";
+import type { Outcome } from "@/app/actions/outcomes";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -80,6 +82,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Name</th>
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Email</th>
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Status</th>
+                    <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Outcome</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -93,6 +96,9 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                       </td>
                       <td className="px-4 py-2.5">
                         <span className={cn("badge", STATUS_STYLES[r.status])}>{r.status}</span>
+                      </td>
+                      <td className="px-4 py-2.5">
+                        <OutcomeSelect sendId={r.id} current={(r.outcome as Outcome) ?? null} />
                       </td>
                     </tr>
                   ))}
