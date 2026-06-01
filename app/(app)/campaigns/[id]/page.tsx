@@ -82,6 +82,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Name</th>
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Email</th>
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Status</th>
+                    <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Replied</th>
                     <th className="px-4 py-2.5 text-left font-medium text-muted-foreground">Outcome</th>
                   </tr>
                 </thead>
@@ -96,6 +97,11 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
                       </td>
                       <td className="px-4 py-2.5">
                         <span className={cn("badge", STATUS_STYLES[r.status])}>{r.status}</span>
+                      </td>
+                      <td className="px-4 py-2.5 text-xs text-muted-foreground">
+                        {r.replied_at
+                          ? new Date(r.replied_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })
+                          : "—"}
                       </td>
                       <td className="px-4 py-2.5">
                         <OutcomeSelect sendId={r.id} current={(r.outcome as Outcome) ?? null} />

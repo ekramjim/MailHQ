@@ -1,13 +1,30 @@
-import { loginWithGoogle } from "@/app/actions/auth";
+"use client";
+
+import { useState } from "react";
+import Link from "next/link";
+import { login, loginWithGoogle } from "@/app/actions/auth";
 
 export default function LoginPage() {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(formData: FormData) {
+    setLoading(true);
+    setError(null);
+    const result = await login(formData);
+    if (result?.error) {
+      setError(result.error);
+      setLoading(false);
+    }
+  }
+
   return (
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-medium font-heading">
           Mail<span className="text-cyan-500">HQ</span>
         </h1>
-        <p className="text-muted-foreground text-sm mt-1">Sign in to start sending</p>
+        <p className="text-muted-foreground text-sm mt-1">Sign in to your account</p>
       </div>
 
       <form action={loginWithGoogle}>
@@ -17,8 +34,32 @@ export default function LoginPage() {
         </button>
       </form>
 
-      <p className="text-xs text-center text-muted-foreground">
-        MailHQ uses your Gmail account to send emails on your behalf.
+      <div className="flex items-center gap-3">
+        <div className="flex-1 h-px bg-border" />
+        <span className="text-xs text-muted-foreground">or</span>
+        <div className="flex-1 h-px bg-border" />
+      </div>
+
+      <form action={handleSubmit} className="flex flex-col gap-4">
+        <div className="flex flex-col gap-1.5">
+          <label className="label">Email</label>
+          <input name="email" type="email" required placeholder="you@example.com" className="input" />
+        </div>
+        <div className="flex flex-col gap-1.5">
+          <label className="label">Password</label>
+          <input name="password" type="password" required placeholder="••••••••" className="input" />
+        </div>
+
+        {error && <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>}
+
+        <button type="submit" disabled={loading} className="btn-primary py-2.5">
+          {loading ? "Signing in…" : "Sign in"}
+        </button>
+      </form>
+
+      <p className="text-sm text-center text-muted-foreground">
+        No account?{" "}
+        <Link href="/signup" className="text-cyan-500 hover:underline">Sign up</Link>
       </p>
     </div>
   );
