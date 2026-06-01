@@ -24,8 +24,8 @@ const config: Config = {
         destructive: "hsl(var(--destructive))",
       },
       fontFamily: {
-        sans: ["var(--font-roboto)", "Roboto", "sans-serif"],
-        heading: ["var(--font-roboto)", "Roboto", "sans-serif"],
+        sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        heading: ["var(--font-inter)", "Inter", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       borderRadius: {
