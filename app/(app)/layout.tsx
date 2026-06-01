@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen bg-background">
       <Sidebar user={user} />
       <div className="flex-1 ml-60 p-3">
-        <main className="min-h-[calc(100vh-1.5rem)] rounded-2xl bg-card border border-border p-8">
+        <main className="min-h-[calc(100vh-1.5rem)] rounded-2xl bg-card p-8">
           {children}
         </main>
       </div>
