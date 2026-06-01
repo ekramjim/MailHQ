@@ -27,9 +27,9 @@ export function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-60 border-r border-border bg-card dark:bg-black flex flex-col z-40">
+    <aside className="fixed left-0 top-0 h-screen w-60 bg-card dark:bg-black flex flex-col z-40">
       {/* Logo */}
-      <div className="px-5 py-5 border-b border-border">
+      <div className="px-5 py-5">
         <Link href="/dashboard" className="font-bold font-heading text-xl">
           Mail<span className="text-cyan-500">HQ</span>
         </Link>
@@ -55,7 +55,7 @@ export function Sidebar({ user }: { user: User }) {
       </nav>
 
       {/* Bottom user section */}
-      <div className="px-3 py-4 border-t border-border flex flex-col gap-2">
+      <div className="px-3 py-4 flex flex-col gap-2">
         <div className="flex items-center justify-between px-3 py-2">
           <span className="text-xs text-muted-foreground truncate">{user.email}</span>
           <ThemeToggle />
