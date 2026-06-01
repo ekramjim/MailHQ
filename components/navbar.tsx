@@ -22,7 +22,7 @@ export function Navbar({ user }: { user: User }) {
   return (
     <nav className="border-b border-border bg-card px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-8">
-        <Link href="/dashboard" className="font-bold font-heading text-xl">
+        <Link href="/dashboard" className="font-medium font-heading text-xl">
           Mail<span className="text-cyan-500">HQ</span>
         </Link>
 

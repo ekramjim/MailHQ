@@ -73,7 +73,7 @@ export function ContactsTable({ initialContacts }: Props) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold font-heading">Contacts</h1>
+          <h1 className="text-2xl font-medium font-heading">Contacts</h1>
           <p className="text-sm text-muted-foreground mt-0.5">{contacts.length} total</p>
         </div>
         <div className="flex items-center gap-2">
@@ -191,7 +191,7 @@ export function ContactsTable({ initialContacts }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setModal(null)} />
           <div className="relative bg-card border border-border rounded-2xl shadow-lg w-full max-w-lg p-6 flex flex-col gap-4">
-            <h2 className="text-lg font-semibold font-heading">
+            <h2 className="text-lg font-medium font-heading">
               {modal.type === "add" && "Add contact"}
               {modal.type === "edit" && "Edit contact"}
               {modal.type === "csv" && "Import from CSV"}
@@ -214,7 +214,7 @@ export function ContactsTable({ initialContacts }: Props) {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" onClick={() => setDeleteId(null)} />
           <div className="relative bg-card border border-border rounded-2xl shadow-lg w-full max-w-sm p-6 flex flex-col gap-4">
-            <h2 className="text-lg font-semibold font-heading">Delete contact?</h2>
+            <h2 className="text-lg font-medium font-heading">Delete contact?</h2>
             <p className="text-sm text-muted-foreground">This action cannot be undone.</p>
             <div className="flex justify-end gap-2">
               <button className="btn-secondary" onClick={() => setDeleteId(null)} disabled={isPending}>Cancel</button>

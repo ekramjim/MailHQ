@@ -2,7 +2,7 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold font-heading">Dashboard</h1>
+        <h1 className="text-2xl font-medium font-heading">Dashboard</h1>
         <p className="text-muted-foreground text-sm mt-1">Overview of your outreach campaigns</p>
       </div>
 
@@ -14,7 +14,7 @@ export default function DashboardPage() {
         ].map((stat) => (
           <div key={stat.label} className="card p-6 flex flex-col gap-1">
             <span className="text-sm text-muted-foreground font-medium">{stat.label}</span>
-            <span className="text-4xl font-bold font-heading text-cyan-500">{stat.value}</span>
+            <span className="text-4xl font-medium font-heading text-cyan-500">{stat.value}</span>
           </div>
         ))}
       </div>

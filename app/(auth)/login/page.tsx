@@ -21,7 +21,7 @@ export default function LoginPage() {
   return (
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold font-heading">
+        <h1 className="text-2xl font-medium font-heading">
           Mail<span className="text-cyan-500">HQ</span>
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Sign in to your account</p>

@@ -30,7 +30,7 @@ export function Sidebar({ user }: { user: User }) {
     <aside className="fixed left-0 top-0 h-screen w-60 bg-background flex flex-col z-40">
       {/* Logo */}
       <div className="px-5 py-5">
-        <Link href="/dashboard" className="font-bold font-heading text-xl">
+        <Link href="/dashboard" className="font-medium font-heading text-xl">
           Mail<span className="text-cyan-500">HQ</span>
         </Link>
       </div>
