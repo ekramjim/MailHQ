@@ -6,8 +6,8 @@ export default function Home() {
       <div className="card p-8 max-w-md w-full flex flex-col gap-6">
         <div className="flex flex-col gap-1">
           <span className="font-mono text-xs text-muted-foreground">v0.1.0</span>
-          <h1 className="text-4xl font-bold font-heading">
-            Mail<span className="text-cyan-500">HQ</span>
+          <h1 className="text-4xl font-medium font-heading">
+            MailHQ
           </h1>
           <p className="text-muted-foreground text-sm mt-1">
             Personal outreach management — write, send, and track bulk emails with AI.

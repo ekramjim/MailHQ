@@ -22,8 +22,8 @@ export function Navbar({ user }: { user: User }) {
   return (
     <nav className="border-b border-border bg-card px-6 py-3 flex items-center justify-between">
       <div className="flex items-center gap-8">
-        <Link href="/dashboard" className="font-bold font-heading text-xl">
-          Mail<span className="text-cyan-500">HQ</span>
+        <Link href="/dashboard" className="font-medium font-heading text-xl">
+          MailHQ
         </Link>
 
         <div className="hidden md:flex items-center gap-1">
@@ -34,7 +34,7 @@ export function Navbar({ user }: { user: User }) {
               className={cn(
                 "flex items-center gap-2 px-3 py-2 text-sm font-medium rounded-lg transition-all",
                 pathname === href
-                  ? "bg-cyan-50 text-cyan-500"
+                  ? "bg-orange-50 text-orange-500"
                   : "text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >

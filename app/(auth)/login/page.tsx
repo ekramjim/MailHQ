@@ -21,8 +21,8 @@ export default function LoginPage() {
   return (
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
       <div>
-        <h1 className="text-2xl font-bold font-heading">
-          Mail<span className="text-cyan-500">HQ</span>
+        <h1 className="text-2xl font-medium font-heading">
+          MailHQ
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Sign in to your account</p>
       </div>
@@ -43,42 +43,23 @@ export default function LoginPage() {
       <form action={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
           <label className="label">Email</label>
-          <input
-            name="email"
-            type="email"
-            required
-            placeholder="you@example.com"
-            className="input"
-          />
+          <input name="email" type="email" required placeholder="you@example.com" className="input" />
         </div>
-
         <div className="flex flex-col gap-1.5">
           <label className="label">Password</label>
-          <input
-            name="password"
-            type="password"
-            required
-            placeholder="••••••••"
-            className="input"
-          />
+          <input name="password" type="password" required placeholder="••••••••" className="input" />
         </div>
 
-        {error && (
-          <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">
-            {error}
-          </p>
-        )}
+        {error && <p className="text-sm text-destructive bg-destructive/10 rounded-lg px-3 py-2">{error}</p>}
 
         <button type="submit" disabled={loading} className="btn-primary py-2.5">
-          {loading ? "Signing in..." : "Sign In"}
+          {loading ? "Signing in…" : "Sign in"}
         </button>
       </form>
 
       <p className="text-sm text-center text-muted-foreground">
         No account?{" "}
-        <Link href="/signup" className="font-medium text-cyan-500 hover:underline">
-          Sign up
-        </Link>
+        <Link href="/signup" className="text-orange-500 hover:underline">Sign up</Link>
       </p>
     </div>
   );

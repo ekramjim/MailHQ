@@ -41,6 +41,8 @@ export async function loginWithGoogle() {
     provider: "google",
     options: {
       redirectTo: `${origin}/auth/callback`,
+      scopes: "email profile https://www.googleapis.com/auth/gmail.send",
+      queryParams: { access_type: "offline", prompt: "consent" },
     },
   });
 

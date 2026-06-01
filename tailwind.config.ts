@@ -24,8 +24,8 @@ const config: Config = {
         destructive: "hsl(var(--destructive))",
       },
       fontFamily: {
-        sans: ["var(--font-inter)", "sans-serif"],
-        heading: ["var(--font-space-grotesk)", "sans-serif"],
+        sans: ["var(--font-inter)", "Inter", "sans-serif"],
+        heading: ["var(--font-inter)", "Inter", "sans-serif"],
         mono: ["var(--font-jetbrains-mono)", "monospace"],
       },
       borderRadius: {
@@ -41,7 +41,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };
 
 export default config;
