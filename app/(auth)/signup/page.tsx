@@ -22,7 +22,7 @@ export default function SignupPage() {
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-medium font-heading">
-          Mail<span className="text-cyan-500">HQ</span>
+          MailHQ
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Create your account</p>
       </div>
@@ -63,7 +63,7 @@ export default function SignupPage() {
 
       <p className="text-sm text-center text-muted-foreground">
         Already have an account?{" "}
-        <Link href="/login" className="text-cyan-500 hover:underline">Sign in</Link>
+        <Link href="/login" className="text-orange-500 hover:underline">Sign in</Link>
       </p>
     </div>
   );

@@ -90,7 +90,7 @@ export async function getCampaignRecipients(campaignId: string) {
 
   const { data, error } = await supabase
     .from("sends")
-    .select("*, contacts(name, email, category, institution)")
+    .select("*, contacts(name, email, institution)")
     .eq("campaign_id", campaignId)
     .order("created_at", { ascending: true });
 

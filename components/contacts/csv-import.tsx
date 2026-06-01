@@ -11,7 +11,7 @@ type Props = {
   onCancel: () => void;
 };
 
-const HEADERS = ["name", "email", "category", "institution", "notes"];
+const HEADERS = ["name", "email", "institution", "notes"];
 
 const SAMPLE_ROWS = [
   ["Jane Smith", "jane@mit.edu", "professor", "MIT", "Interested in ML research"],
@@ -45,7 +45,6 @@ function parseRows(raw: Array<Record<string, string>>) {
     .map((r) => ({
       name: r.name?.trim() ?? "",
       email: r.email?.trim().toLowerCase() ?? "",
-      category: r.category?.trim() ?? "",
       institution: (r.institution ?? r.organization ?? "").trim(),
       notes: r.notes?.trim() ?? "",
     }));
@@ -144,7 +143,7 @@ export function CSVImport({ onSuccess, onCancel }: Props) {
             className="btn-secondary gap-2 flex-1 text-xs"
             onClick={downloadCSVTemplate}
           >
-            <FileText className="h-3.5 w-3.5 text-cyan-500" />
+            <FileText className="h-3.5 w-3.5 text-orange-500" />
             CSV template
             <Download className="h-3 w-3 ml-auto text-muted-foreground" />
           </button>
@@ -159,7 +158,7 @@ export function CSVImport({ onSuccess, onCancel }: Props) {
           </button>
         </div>
         <p className="text-xs text-muted-foreground">
-          Columns: <code className="font-mono bg-muted px-1 py-0.5 rounded">name, email, category, institution, notes</code>
+          Columns: <code className="font-mono bg-muted px-1 py-0.5 rounded">name, email, institution, notes</code>
         </p>
       </div>
 
@@ -169,11 +168,11 @@ export function CSVImport({ onSuccess, onCancel }: Props) {
       <div
         className={cn(
           "border-2 border-dashed rounded-xl p-8 flex flex-col items-center gap-3 cursor-pointer transition-colors",
-          fileName ? "border-cyan-500 bg-cyan-50/30 dark:bg-cyan-500/5" : "border-border hover:border-cyan-500"
+          fileName ? "border-orange-500 bg-orange-50/30 dark:bg-orange-500/5" : "border-border hover:border-orange-500"
         )}
         onClick={() => inputRef.current?.click()}
       >
-        <Upload className={cn("h-6 w-6", fileName ? "text-cyan-500" : "text-muted-foreground")} />
+        <Upload className={cn("h-6 w-6", fileName ? "text-orange-500" : "text-muted-foreground")} />
         <div className="text-center">
           <p className="text-sm font-medium">
             {fileName ? fileName : "Click to select a file"}

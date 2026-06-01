@@ -51,7 +51,7 @@ export default async function CampaignsPage() {
               {campaigns.map((c) => (
                 <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                   <td className="px-4 py-3">
-                    <Link href={`/campaigns/${c.id}`} className="font-medium hover:text-cyan-500 transition-colors">
+                    <Link href={`/campaigns/${c.id}`} className="font-medium hover:text-orange-500 transition-colors">
                       {c.name}
                     </Link>
                   </td>

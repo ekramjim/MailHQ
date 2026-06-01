@@ -2,20 +2,12 @@
 
 import { useState, useTransition, useCallback } from "react";
 import { Pencil, Trash2, Plus, Upload, Search, X } from "lucide-react";
+
 import { deleteContact, type Contact } from "@/app/actions/contacts";
 import { ContactForm } from "./contact-form";
 import { CSVImport } from "./csv-import";
 import { cn } from "@/lib/utils";
 
-const CATEGORIES = ["all", "professor", "researcher", "industry", "recruiter", "other"];
-
-const CATEGORY_COLORS: Record<string, string> = {
-  professor: "bg-blue-50 text-blue-600 border-blue-200 dark:bg-blue-950 dark:text-blue-400 dark:border-blue-800",
-  researcher: "bg-purple-50 text-purple-600 border-purple-200 dark:bg-purple-950 dark:text-purple-400 dark:border-purple-800",
-  industry: "bg-amber-50 text-amber-600 border-amber-200 dark:bg-amber-950 dark:text-amber-400 dark:border-amber-800",
-  recruiter: "bg-green-50 text-green-600 border-green-200 dark:bg-green-950 dark:text-green-400 dark:border-green-800",
-  other: "bg-muted text-muted-foreground",
-};
 
 type Modal = { type: "add" } | { type: "edit"; contact: Contact } | { type: "csv" } | null;
 
@@ -26,7 +18,6 @@ type Props = {
 export function ContactsTable({ initialContacts }: Props) {
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
   const [search, setSearch] = useState("");
-  const [category, setCategory] = useState("all");
   const [modal, setModal] = useState<Modal>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -37,15 +28,12 @@ export function ContactsTable({ initialContacts }: Props) {
     setTimeout(() => setToast(null), 3000);
   }
 
-  const filtered = contacts.filter((c) => {
-    const matchSearch =
-      !search ||
-      c.name.toLowerCase().includes(search.toLowerCase()) ||
-      c.email.toLowerCase().includes(search.toLowerCase()) ||
-      (c.institution ?? "").toLowerCase().includes(search.toLowerCase());
-    const matchCat = category === "all" || c.category === category;
-    return matchSearch && matchCat;
-  });
+  const filtered = contacts.filter((c) =>
+    !search ||
+    c.name.toLowerCase().includes(search.toLowerCase()) ||
+    c.email.toLowerCase().includes(search.toLowerCase()) ||
+    (c.institution ?? "").toLowerCase().includes(search.toLowerCase())
+  );
 
   function handleDelete(id: string) {
     startTransition(async () => {
@@ -88,41 +76,23 @@ export function ContactsTable({ initialContacts }: Props) {
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-          <input
-            className="input pl-9"
-            placeholder="Search by name, email, institution…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
-          {search && (
-            <button
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              onClick={() => setSearch("")}
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          )}
-        </div>
-        <div className="flex gap-4 flex-wrap">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setCategory(cat)}
-              className={cn(
-                "pb-0.5 text-xs font-medium transition-all border-b-2",
-                category === cat
-                  ? "border-cyan-500 text-cyan-500"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
-            </button>
-          ))}
-        </div>
+      {/* Search */}
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <input
+          className="input pl-9"
+          placeholder="Search by name, email, institution…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        {search && (
+          <button
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+            onClick={() => setSearch("")}
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        )}
       </div>
 
       {/* Table */}
@@ -140,7 +110,6 @@ export function ContactsTable({ initialContacts }: Props) {
                 <tr className="border-b border-border bg-muted/50">
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Name</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Email</th>
-                  <th className="px-4 py-3 text-left font-medium text-muted-foreground">Category</th>
                   <th className="px-4 py-3 text-left font-medium text-muted-foreground">Institution</th>
                   <th className="px-4 py-3 text-right font-medium text-muted-foreground">Actions</th>
                 </tr>
@@ -150,15 +119,6 @@ export function ContactsTable({ initialContacts }: Props) {
                   <tr key={contact.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3 font-medium">{contact.name}</td>
                     <td className="px-4 py-3 text-muted-foreground">{contact.email}</td>
-                    <td className="px-4 py-3">
-                      {contact.category ? (
-                        <span className={cn("badge border", CATEGORY_COLORS[contact.category] ?? "badge-muted")}>
-                          {contact.category}
-                        </span>
-                      ) : (
-                        <span className="text-muted-foreground">—</span>
-                      )}
-                    </td>
                     <td className="px-4 py-3 text-muted-foreground">{contact.institution ?? "—"}</td>
                     <td className="px-4 py-3">
                       <div className="flex items-center justify-end gap-1">

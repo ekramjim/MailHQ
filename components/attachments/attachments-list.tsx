@@ -105,12 +105,12 @@ export function AttachmentsList({ initialAttachments }: { initialAttachments: At
         onClick={() => inputRef.current?.click()}
         className={cn(
           "border-2 border-dashed rounded-xl p-10 flex flex-col items-center gap-2 cursor-pointer transition-colors",
-          isDragging ? "border-cyan-500 bg-cyan-50/30 dark:bg-cyan-500/5" : "border-border hover:border-cyan-500"
+          isDragging ? "border-orange-500 bg-orange-50/30 dark:bg-orange-500/5" : "border-border hover:border-orange-500"
         )}
       >
-        <Upload className={cn("h-6 w-6", isDragging ? "text-cyan-500" : "text-muted-foreground")} />
+        <Upload className={cn("h-6 w-6", isDragging ? "text-orange-500" : "text-muted-foreground")} />
         <p className="text-sm text-muted-foreground">
-          Drag & drop files here, or <span className="text-cyan-500">browse</span>
+          Drag & drop files here, or <span className="text-orange-500">browse</span>
         </p>
         <p className="text-xs text-muted-foreground">PDF, images, Word, Excel — any file type</p>
       </div>

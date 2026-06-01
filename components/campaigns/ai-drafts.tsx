@@ -8,7 +8,7 @@ type Recipient = {
   id: string;
   contact_id: string;
   status: string;
-  contacts: { name: string; email: string; category: string | null; institution: string | null } | null;
+  contacts: { name: string; email: string; institution: string | null } | null;
 };
 
 type Draft = {
@@ -89,7 +89,7 @@ export function AIDrafts({ recipients, subject, baseBody, onDraftsChange }: Prop
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-base font-medium flex items-center gap-2">
-            <Sparkles className="h-4 w-4 text-cyan-500" /> AI Personalised Drafts
+            <Sparkles className="h-4 w-4 text-orange-500" /> AI Personalised Drafts
           </h2>
           <p className="text-xs text-muted-foreground mt-0.5">Generate a personalised version of your email for each recipient</p>
         </div>
@@ -144,7 +144,7 @@ export function AIDrafts({ recipients, subject, baseBody, onDraftsChange }: Prop
                 <div className="border-t border-border px-4 py-3">
                   {draft?.loading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground py-2">
-                      <Sparkles className="h-4 w-4 animate-pulse text-cyan-500" />
+                      <Sparkles className="h-4 w-4 animate-pulse text-orange-500" />
                       Generating personalised draft…
                     </div>
                   ) : draft?.error ? (

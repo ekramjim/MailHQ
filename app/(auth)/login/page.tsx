@@ -22,7 +22,7 @@ export default function LoginPage() {
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
       <div>
         <h1 className="text-2xl font-medium font-heading">
-          Mail<span className="text-cyan-500">HQ</span>
+          MailHQ
         </h1>
         <p className="text-muted-foreground text-sm mt-1">Sign in to your account</p>
       </div>
@@ -59,7 +59,7 @@ export default function LoginPage() {
 
       <p className="text-sm text-center text-muted-foreground">
         No account?{" "}
-        <Link href="/signup" className="text-cyan-500 hover:underline">Sign up</Link>
+        <Link href="/signup" className="text-orange-500 hover:underline">Sign up</Link>
       </p>
     </div>
   );

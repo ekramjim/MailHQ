@@ -11,16 +11,52 @@ type SendResult = {
   error?: string;
 };
 
-function buildEmail({ from, to, subject, body }: { from: string; to: string; subject: string; body: string }) {
+function buildEmail({
+  from, to, subject, body, attachment,
+}: {
+  from: string;
+  to: string;
+  subject: string;
+  body: string;
+  attachment?: { name: string; mimeType: string; data: string };
+}) {
+  const boundary = "mailhq_boundary_" + Date.now();
+
+  if (!attachment) {
+    const message = [
+      `From: ${from}`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: text/plain; charset=utf-8`,
+      ``,
+      body,
+    ].join("\r\n");
+    return Buffer.from(message).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  }
+
   const message = [
     `From: ${from}`,
     `To: ${to}`,
     `Subject: ${subject}`,
     `MIME-Version: 1.0`,
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    ``,
+    `--${boundary}`,
     `Content-Type: text/plain; charset=utf-8`,
     ``,
     body,
+    ``,
+    `--${boundary}`,
+    `Content-Type: ${attachment.mimeType}; name="${attachment.name}"`,
+    `Content-Disposition: attachment; filename="${attachment.name}"`,
+    `Content-Transfer-Encoding: base64`,
+    ``,
+    attachment.data,
+    ``,
+    `--${boundary}--`,
   ].join("\r\n");
+
   return Buffer.from(message).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
 }
 
@@ -43,8 +79,25 @@ export async function sendCampaign(
   const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
   const { data: campaign, error: campError } = await supabase
-    .from("campaigns").select("*").eq("id", campaignId).single();
+    .from("campaigns").select("*, attachments(file_name, file_url, mime_type)").eq("id", campaignId).single();
   if (campError) throw campError;
+
+  // Fetch attachment file if present
+  let attachmentPayload: { name: string; mimeType: string; data: string } | undefined;
+  if (campaign.attachment_id && campaign.attachments) {
+    const att = campaign.attachments as { file_name: string; file_url: string; mime_type: string | null };
+    try {
+      const res = await fetch(att.file_url);
+      const buffer = await res.arrayBuffer();
+      attachmentPayload = {
+        name: att.file_name,
+        mimeType: att.mime_type ?? "application/octet-stream",
+        data: Buffer.from(buffer).toString("base64"),
+      };
+    } catch {
+      // Send without attachment if fetch fails
+    }
+  }
 
   const { data: sends, error: sendsError } = await supabase
     .from("sends").select("*, contacts(name, email)")
@@ -66,7 +119,13 @@ export async function sendCampaign(
       .replace(/\{\{email\}\}/gi, contact.email);
 
     try {
-      const raw = buildEmail({ from: `${senderName} <${senderEmail}>`, to: contact.email, subject: campaign.subject, body });
+      const raw = buildEmail({
+        from: `${senderName} <${senderEmail}>`,
+        to: contact.email,
+        subject: campaign.subject,
+        body,
+        attachment: attachmentPayload,
+      });
       await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
       await supabase.from("sends").update({ status: "sent" }).eq("id", send.id);
       results.push({ contactId: send.contact_id, name: contact.name, email: contact.email, success: true });

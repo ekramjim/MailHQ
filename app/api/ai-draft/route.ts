@@ -18,7 +18,6 @@ export async function POST(req: NextRequest) {
 Recipient details:
 - Name: ${contact.name}
 - Email: ${contact.email}
-- Category: ${contact.category ?? "unknown"}
 - Institution: ${contact.institution ?? "unknown"}
 
 Subject: ${subject}

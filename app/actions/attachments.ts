@@ -62,7 +62,17 @@ export async function uploadAttachment(formData: FormData) {
     throw dbError;
   }
 
+  const { data: attachment } = await supabase
+    .from("attachments")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("file_name", file.name)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .single();
+
   revalidatePath("/attachments");
+  return attachment?.id ?? "";
 }
 
 export async function deleteAttachment(id: string, fileUrl: string) {

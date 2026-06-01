@@ -83,7 +83,7 @@ export default async function DashboardPage() {
         {stats.map((stat) => (
           <div key={stat.label} className="card p-5 flex flex-col gap-1">
             <span className="text-xs text-muted-foreground">{stat.label}</span>
-            <span className="text-3xl font-medium text-cyan-500">{stat.value}</span>
+            <span className="text-3xl font-medium text-orange-500">{stat.value}</span>
           </div>
         ))}
       </div>
@@ -93,12 +93,12 @@ export default async function DashboardPage() {
         <div className="card overflow-hidden">
           <div className="px-4 py-3 border-b border-border flex items-center justify-between">
             <h2 className="text-sm font-medium text-muted-foreground uppercase tracking-wide">Recent campaigns</h2>
-            <Link href="/campaigns" className="text-xs text-cyan-500 hover:underline">View all</Link>
+            <Link href="/campaigns" className="text-xs text-orange-500 hover:underline">View all</Link>
           </div>
           {recentCampaigns.length === 0 ? (
             <div className="p-8 text-sm text-muted-foreground text-center">
               No campaigns yet.{" "}
-              <Link href="/campaigns/new" className="text-cyan-500 hover:underline">Create one</Link>
+              <Link href="/campaigns/new" className="text-orange-500 hover:underline">Create one</Link>
             </div>
           ) : (
             <table className="w-full text-sm">
@@ -106,7 +106,7 @@ export default async function DashboardPage() {
                 {recentCampaigns.map((c) => (
                   <tr key={c.id} className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3">
-                      <Link href={`/campaigns/${c.id}`} className="font-medium hover:text-cyan-500 transition-colors">
+                      <Link href={`/campaigns/${c.id}`} className="font-medium hover:text-orange-500 transition-colors">
                         {c.name}
                       </Link>
                     </td>

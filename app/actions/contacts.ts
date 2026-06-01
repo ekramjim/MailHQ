@@ -8,7 +8,6 @@ export type Contact = {
   user_id: string;
   name: string;
   email: string;
-  category: string | null;
   institution: string | null;
   notes: string | null;
   created_at: string;
@@ -17,7 +16,6 @@ export type Contact = {
 export type ContactFormData = {
   name: string;
   email: string;
-  category: string;
   institution: string;
   notes: string;
 };
@@ -57,7 +55,6 @@ export async function createContact(formData: ContactFormData) {
     user_id: userId,
     name: formData.name.trim(),
     email: formData.email.trim().toLowerCase(),
-    category: formData.category || null,
     institution: formData.institution.trim() || null,
     notes: formData.notes.trim() || null,
   });
@@ -74,7 +71,6 @@ export async function updateContact(id: string, formData: ContactFormData) {
     .update({
       name: formData.name.trim(),
       email: formData.email.trim().toLowerCase(),
-      category: formData.category || null,
       institution: formData.institution.trim() || null,
       notes: formData.notes.trim() || null,
     })
@@ -99,7 +95,7 @@ export async function deleteContact(id: string) {
 }
 
 export async function bulkImportContacts(
-  contacts: Array<{ name: string; email: string; category?: string; institution?: string; notes?: string }>
+  contacts: Array<{ name: string; email: string; institution?: string; notes?: string }>
 ) {
   const { supabase, userId } = await getUserId();
 
@@ -109,7 +105,6 @@ export async function bulkImportContacts(
       user_id: userId,
       name: c.name.trim(),
       email: c.email.trim().toLowerCase(),
-      category: c.category?.trim() || null,
       institution: c.institution?.trim() || null,
       notes: c.notes?.trim() || null,
     }));

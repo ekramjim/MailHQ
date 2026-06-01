@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef, useEffect } from "react";
 import { updateOutcome, type Outcome } from "@/app/actions/outcomes";
 import { cn } from "@/lib/utils";
 
@@ -19,9 +19,26 @@ type Props = {
 export function OutcomeSelect({ sendId, current }: Props) {
   const [selected, setSelected] = useState<Outcome | null>(current);
   const [open, setOpen] = useState(false);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
   const [isPending, startTransition] = useTransition();
+  const btnRef = useRef<HTMLButtonElement>(null);
 
   const currentOutcome = OUTCOMES.find((o) => o.value === selected);
+
+  function handleOpen() {
+    if (btnRef.current) {
+      const rect = btnRef.current.getBoundingClientRect();
+      setPos({ top: rect.bottom + window.scrollY + 4, left: rect.left + window.scrollX });
+    }
+    setOpen((v) => !v);
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    function handleScroll() { setOpen(false); }
+    window.addEventListener("scroll", handleScroll, true);
+    return () => window.removeEventListener("scroll", handleScroll, true);
+  }, [open]);
 
   function handleSelect(value: Outcome | null) {
     setSelected(value);
@@ -32,9 +49,10 @@ export function OutcomeSelect({ sendId, current }: Props) {
   }
 
   return (
-    <div className="relative">
+    <>
       <button
-        onClick={() => setOpen((v) => !v)}
+        ref={btnRef}
+        onClick={handleOpen}
         disabled={isPending}
         className={cn(
           "badge border text-xs cursor-pointer hover:opacity-80 transition-opacity",
@@ -47,7 +65,10 @@ export function OutcomeSelect({ sendId, current }: Props) {
       {open && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
-          <div className="absolute right-0 top-7 z-50 bg-card border border-border rounded-xl shadow-lg p-1 flex flex-col gap-0.5 min-w-[160px]">
+          <div
+            className="fixed z-50 bg-card border border-border rounded-xl shadow-lg p-1 flex flex-col gap-0.5 min-w-[160px]"
+            style={{ top: pos.top, left: pos.left }}
+          >
             {OUTCOMES.map((o) => (
               <button
                 key={o.value}
@@ -71,6 +92,6 @@ export function OutcomeSelect({ sendId, current }: Props) {
           </div>
         </>
       )}
-    </div>
+    </>
   );
 }
