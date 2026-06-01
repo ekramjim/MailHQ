@@ -27,7 +27,7 @@ export function Sidebar({ user }: { user: User }) {
   const pathname = usePathname();
 
   return (
-    <aside className="fixed left-0 top-0 h-screen w-60 bg-card dark:bg-black flex flex-col z-40">
+    <aside className="fixed left-0 top-0 h-screen w-60 bg-background flex flex-col z-40">
       {/* Logo */}
       <div className="px-5 py-5">
         <Link href="/dashboard" className="font-bold font-heading text-xl">
