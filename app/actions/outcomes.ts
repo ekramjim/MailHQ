@@ -14,7 +14,7 @@ export async function updateOutcome(sendId: string, outcome: Outcome | null) {
     .from("sends")
     .update({
       outcome,
-      replied_at: outcome && outcome !== "no_response" ? new Date().toISOString() : null,
+      ...(outcome && outcome !== "no_response" ? { replied_at: new Date().toISOString() } : outcome === null ? { replied_at: null } : {}),
     })
     .eq("id", sendId);
 

@@ -65,14 +65,17 @@ export async function sendCampaign(
   drafts: Record<string, string>
 ): Promise<{ results: SendResult[]; sent: number; failed: number }> {
   const supabase = await createServerSupabaseClient();
-  const { data: { session } } = await supabase.auth.getSession();
-  if (!session) throw new Error("Not authenticated");
 
-  const providerToken = session.provider_token;
+  // Use getUser() for server-side token validation instead of getSession()
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data: { session } } = await supabase.auth.getSession();
+  const providerToken = session?.provider_token;
   if (!providerToken) throw new Error("Gmail access not granted. Please sign out and sign back in with Google.");
 
-  const senderEmail = session.user.email!;
-  const senderName = session.user.user_metadata?.full_name || senderEmail;
+  const senderEmail = user.email!;
+  const senderName = user.user_metadata?.full_name || senderEmail;
 
   const oauth2Client = new google.auth.OAuth2();
   oauth2Client.setCredentials({ access_token: providerToken });
@@ -106,6 +109,7 @@ export async function sendCampaign(
   if (!sends || sends.length === 0) throw new Error("No pending recipients found.");
 
   const results: SendResult[] = [];
+  const successIds: string[] = [];
 
   for (const send of sends) {
     const contact = send.contacts as { name: string; email: string } | null;
@@ -127,7 +131,7 @@ export async function sendCampaign(
         attachment: attachmentPayload,
       });
       await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
-      await supabase.from("sends").update({ status: "sent" }).eq("id", send.id);
+      successIds.push(send.id);
       results.push({ contactId: send.contact_id, name: contact.name, email: contact.email, success: true });
     } catch (err: unknown) {
       results.push({
@@ -140,12 +144,19 @@ export async function sendCampaign(
     }
   }
 
+  // Batch update all successful sends in one query
+  if (successIds.length > 0) {
+    await supabase.from("sends").update({ status: "sent" }).in("id", successIds);
+  }
+
   const sent = results.filter((r) => r.success).length;
   const failed = results.filter((r) => !r.success).length;
 
   if (sent > 0) {
+    // Only mark fully sent if every pending send was processed successfully (none skipped or failed)
+    const allProcessed = results.length === sends.length && results.every((r) => r.success);
     await supabase.from("campaigns")
-      .update({ status: sent === sends.length ? "sent" : "draft" })
+      .update({ status: allProcessed ? "sent" : "draft" })
       .eq("id", campaignId);
   }
 

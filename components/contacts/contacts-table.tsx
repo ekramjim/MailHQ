@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { useState, useTransition, useCallback, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { Pencil, Trash2, Plus, Upload, Search, X } from "lucide-react";
 import { deleteContact, type Contact } from "@/app/actions/contacts";
 import { ContactForm } from "./contact-form";
@@ -14,7 +15,12 @@ type Props = {
 };
 
 export function ContactsTable({ initialContacts }: Props) {
+  const router = useRouter();
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
+
+  useEffect(() => {
+    setContacts(initialContacts);
+  }, [initialContacts]);
   const [search, setSearch] = useState("");
   const [modal, setModal] = useState<Modal>(null);
   const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -44,15 +50,14 @@ export function ContactsTable({ initialContacts }: Props) {
 
   const handleFormSuccess = useCallback(() => {
     setModal(null);
-    // Re-fetch is handled by revalidatePath; reload contacts from server via a hard reload alternative
-    window.location.reload();
-  }, []);
+    router.refresh();
+  }, [router]);
 
   const handleCSVSuccess = useCallback((count: number) => {
     setModal(null);
     showToast(`${count} contacts imported`);
-    window.location.reload();
-  }, []);
+    router.refresh();
+  }, [router]);
 
   return (
     <div className="flex flex-col gap-4">

@@ -48,30 +48,21 @@ export async function uploadAttachment(formData: FormData) {
     .from("attachments")
     .getPublicUrl(path);
 
-  const { error: dbError } = await supabase.from("attachments").insert({
+  const { data: attachment, error: dbError } = await supabase.from("attachments").insert({
     user_id: userId,
     file_name: file.name,
     file_url: publicUrl,
     file_size: file.size,
     mime_type: file.type,
-  });
+  }).select("id").single();
 
   if (dbError) {
     await supabase.storage.from("attachments").remove([path]);
     throw dbError;
   }
 
-  const { data: attachment } = await supabase
-    .from("attachments")
-    .select("id")
-    .eq("user_id", userId)
-    .eq("file_name", file.name)
-    .order("created_at", { ascending: false })
-    .limit(1)
-    .single();
-
   revalidatePath("/attachments");
-  return attachment?.id ?? "";
+  return attachment.id as string;
 }
 
 export async function deleteAttachment(id: string, fileUrl: string) {

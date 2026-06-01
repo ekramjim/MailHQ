@@ -35,7 +35,6 @@ export default async function DashboardPage() {
   const [
     { count: totalContacts },
     { count: totalSent },
-    { count: totalCampaigns },
     { data: positiveOutcomes },
     { data: allSendCounts },
   ] = await Promise.all([
@@ -43,7 +42,6 @@ export default async function DashboardPage() {
     campaignIds.length > 0
       ? supabase.from("sends").select("*", { count: "exact", head: true }).in("campaign_id", campaignIds).eq("status", "sent")
       : Promise.resolve({ count: 0 }),
-    supabase.from("campaigns").select("*", { count: "exact", head: true }).eq("user_id", userId),
     campaignIds.length > 0
       ? supabase.from("sends")
           .select("outcome, contacts(name, email), campaigns(name)")
@@ -55,6 +53,8 @@ export default async function DashboardPage() {
       ? supabase.from("sends").select("campaign_id, status").in("campaign_id", campaignIds)
       : Promise.resolve({ data: [] }),
   ]);
+
+  const totalCampaigns = (campaigns ?? []).length;
 
   // Build recipient count per campaign
   const countMap: Record<string, number> = {};
