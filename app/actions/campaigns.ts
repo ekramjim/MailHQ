@@ -130,6 +130,23 @@ export async function createCampaign(formData: CampaignFormData) {
   return campaign.id as string;
 }
 
+export async function updateCampaign(id: string, formData: Pick<CampaignFormData, "name" | "subject" | "body" | "attachment_id">) {
+  const { supabase, userId } = await getClient();
+  const { error } = await supabase
+    .from("campaigns")
+    .update({
+      name: formData.name.trim(),
+      subject: formData.subject.trim(),
+      body: formData.body.trim(),
+      attachment_id: formData.attachment_id || null,
+    })
+    .eq("id", id)
+    .eq("user_id", userId);
+  if (error) throw error;
+  revalidatePath(`/campaigns/${id}`);
+  revalidatePath("/campaigns");
+}
+
 export async function deleteCampaign(id: string) {
   const { supabase, userId } = await getClient();
   const { error } = await supabase

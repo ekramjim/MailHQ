@@ -110,7 +110,9 @@ export function CampaignForm({ contacts, attachments }: Props) {
             value={form.body}
             onChange={handleChange}
           />
-          <p className="text-xs text-muted-foreground">Use <code className="bg-muted px-1 rounded">{"{{name}}"}</code> as a placeholder — AI personalisation comes in Step 7.</p>
+          <p className="text-xs text-muted-foreground">
+            Placeholders: <code className="bg-muted px-1 rounded">{"{{name}}"}</code> full name · <code className="bg-muted px-1 rounded">{"{{first_name}}"}</code> first name · <code className="bg-muted px-1 rounded">{"{{email}}"}</code> email
+          </p>
         </div>
       </div>
 

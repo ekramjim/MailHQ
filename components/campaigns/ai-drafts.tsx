@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Sparkles, ChevronDown, ChevronUp, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -22,11 +22,19 @@ type Props = {
   recipients: Recipient[];
   subject: string;
   baseBody: string;
+  onDraftsChange?: (drafts: Record<string, string>) => void;
 };
 
-export function AIDrafts({ recipients, subject, baseBody }: Props) {
+export function AIDrafts({ recipients, subject, baseBody, onDraftsChange }: Props) {
   const [drafts, setDrafts] = useState<Record<string, Draft>>({});
   const [expanded, setExpanded] = useState<string | null>(null);
+
+  useEffect(() => {
+    const texts = Object.fromEntries(
+      Object.entries(drafts).filter(([, d]) => d.text).map(([k, d]) => [k, d.text])
+    );
+    onDraftsChange?.(texts);
+  }, [drafts, onDraftsChange]);
   const [generatingAll, setGeneratingAll] = useState(false);
 
   async function generateDraft(recipient: Recipient) {

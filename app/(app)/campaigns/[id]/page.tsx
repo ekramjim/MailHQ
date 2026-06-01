@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Users, Paperclip, Mail } from "lucide-react";
+import { ArrowLeft, Users, Paperclip } from "lucide-react";
 import { getCampaign, getCampaignRecipients } from "@/app/actions/campaigns";
-import { AIDrafts } from "@/components/campaigns/ai-drafts";
+import { getAttachments } from "@/app/actions/attachments";
+import { CampaignDetailClient } from "@/components/campaigns/campaign-detail-client";
+import { CampaignSendWrapper } from "@/components/campaigns/campaign-send-wrapper";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -17,9 +19,10 @@ const STATUS_STYLES: Record<string, string> = {
 export default async function CampaignDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
-  const [campaign, recipients] = await Promise.all([
+  const [campaign, recipients, attachments] = await Promise.all([
     getCampaign(id).catch(() => null),
     getCampaignRecipients(id).catch(() => []),
+    getAttachments().catch(() => []),
   ]);
 
   if (!campaign) notFound();
@@ -45,13 +48,7 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
             )}
           </div>
         </div>
-
-        {campaign.status === "draft" && (
-          <Link href={`/campaigns/${id}/send`} className="btn-primary gap-2">
-            <Mail className="h-4 w-4" />
-            Send campaign
-          </Link>
-        )}
+        <CampaignDetailClient campaign={campaign} attachments={attachments} />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -106,10 +103,11 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
         </div>
       </div>
 
-      {/* AI Drafts */}
-      {recipients.length > 0 && (
-        <AIDrafts
-          recipients={recipients as Parameters<typeof AIDrafts>[0]["recipients"]}
+      {/* AI Drafts + Send — client wrapper manages shared drafts state */}
+      {recipients.length > 0 && campaign.status !== "sent" && (
+        <CampaignSendWrapper
+          campaignId={id}
+          recipients={recipients as Parameters<typeof CampaignSendWrapper>[0]["recipients"]}
           subject={campaign.subject}
           baseBody={campaign.body}
         />
