@@ -107,16 +107,16 @@ export function ContactsTable({ initialContacts }: Props) {
             </button>
           )}
         </div>
-        <div className="flex gap-1.5 flex-wrap">
+        <div className="flex gap-4 flex-wrap">
           {CATEGORIES.map((cat) => (
             <button
               key={cat}
               onClick={() => setCategory(cat)}
               className={cn(
-                "px-3 py-1.5 text-xs font-medium rounded-lg border transition-all",
+                "pb-0.5 text-xs font-medium transition-all border-b-2",
                 category === cat
-                  ? "bg-cyan-500 text-white border-cyan-500"
-                  : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+                  ? "border-cyan-500 text-cyan-500"
+                  : "border-transparent text-muted-foreground hover:text-foreground"
               )}
             >
               {cat === "all" ? "All" : cat.charAt(0).toUpperCase() + cat.slice(1)}
