@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Users, Paperclip, Mail } from "lucide-react";
 import { getCampaign, getCampaignRecipients } from "@/app/actions/campaigns";
+import { AIDrafts } from "@/components/campaigns/ai-drafts";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -104,6 +105,15 @@ export default async function CampaignDetailPage({ params }: { params: Promise<{
           )}
         </div>
       </div>
+
+      {/* AI Drafts */}
+      {recipients.length > 0 && (
+        <AIDrafts
+          recipients={recipients as Parameters<typeof AIDrafts>[0]["recipients"]}
+          subject={campaign.subject}
+          baseBody={campaign.body}
+        />
+      )}
     </div>
   );
 }
