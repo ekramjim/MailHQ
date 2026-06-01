@@ -43,7 +43,7 @@
 
 @layer components {
   .card {
-    @apply bg-card border border-border rounded-xl shadow-sm;
+    @apply bg-card rounded-xl shadow-sm;
   }
 
   .btn {
