@@ -34,7 +34,7 @@ export async function signup(formData: FormData) {
 }
 
 export async function loginWithGoogle() {
-  const origin = (await headers()).get("origin");
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? (await headers()).get("origin");
 
   const supabase = await createServerSupabaseClient();
   const { data, error } = await supabase.auth.signInWithOAuth({
