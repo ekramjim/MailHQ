@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   title: "MailHQ",
   description: "Personal outreach management — write, send, and track bulk emails with AI.",
   verification: {
-    google: "q1-oVKoXk7uq3SFYjWVBCO4u9f0ReYRM3KmBkNSSj2M",
+    google: ["q1-oVKoXk7uq3SFYjWVBCO4u9f0ReYRM3KmBkNSSj2M", "K56Ce97mkdAmRRAdXIDoHSUEub4G7g8_b0t_7pMI23I"],
   },
 };
 
