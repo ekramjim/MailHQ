@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Plus, Mail, Users, Paperclip } from "lucide-react";
 import { getCampaigns } from "@/app/actions/campaigns";
+import { DeleteCampaignButton } from "@/components/campaigns/delete-campaign-button";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<string, string> = {
@@ -45,6 +46,7 @@ export default async function CampaignsPage() {
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Recipients</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Attachment</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground">Created</th>
+                <th className="px-4 py-3" />
               </tr>
             </thead>
             <tbody>
@@ -78,6 +80,9 @@ export default async function CampaignsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 text-muted-foreground">{formatDate(c.created_at)}</td>
+                  <td className="px-4 py-3">
+                    <DeleteCampaignButton id={c.id} />
+                  </td>
                 </tr>
               ))}
             </tbody>
