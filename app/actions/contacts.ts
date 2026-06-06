@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { getAuthenticatedClient } from "@/lib/supabase-server";
 
 export type Contact = {
   id: string;
@@ -20,12 +20,7 @@ export type ContactFormData = {
   notes: string;
 };
 
-async function getUserId() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-  return { supabase, userId: user.id };
-}
+const getUserId = getAuthenticatedClient;
 
 export async function getContacts(search?: string, category?: string) {
   const { supabase, userId } = await getUserId();

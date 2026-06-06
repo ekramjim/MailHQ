@@ -21,8 +21,10 @@ function formatDate(iso: string) {
 
 export default async function DashboardPage() {
   const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  const userId = user!.id;
+  // TEMP: auth bypass — remove when new auth system is in place
+  const userId = process.env.BYPASS_AUTH === "true"
+    ? "00000000-0000-0000-0000-000000000000"
+    : (await supabase.auth.getUser()).data.user!.id;
 
   const { data: campaigns } = await supabase
     .from("campaigns")

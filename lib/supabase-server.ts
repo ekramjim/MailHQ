@@ -35,3 +35,14 @@ export function createServiceClient() {
     { cookies: makeCookieMethods() }
   );
 }
+
+// TEMP: auth bypass — remove when new auth system is in place
+export async function getAuthenticatedClient() {
+  const supabase = createServerSupabaseClient();
+  if (process.env.BYPASS_AUTH === "true") {
+    return { supabase, userId: "00000000-0000-0000-0000-000000000000" };
+  }
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+  return { supabase, userId: user.id };
+}

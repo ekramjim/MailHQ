@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createServerSupabaseClient } from "@/lib/supabase-server";
+import { getAuthenticatedClient } from "@/lib/supabase-server";
 
 export type Attachment = {
   id: string;
@@ -13,12 +13,7 @@ export type Attachment = {
   created_at: string;
 };
 
-async function getClient() {
-  const supabase = await createServerSupabaseClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-  return { supabase, userId: user.id };
-}
+const getClient = getAuthenticatedClient;
 
 export async function getAttachments() {
   const { supabase, userId } = await getClient();
