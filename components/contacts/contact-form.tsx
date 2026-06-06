@@ -1,15 +1,16 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { createContact, updateContact, type Contact, type ContactFormData } from "@/app/actions/contacts";
+import { type Contact, type ContactFormData } from "@/app/actions/contacts";
 
 type Props = {
   contact?: Contact;
+  onSubmit: (data: ContactFormData) => Promise<void>;
   onSuccess: () => void;
   onCancel: () => void;
 };
 
-export function ContactForm({ contact, onSuccess, onCancel }: Props) {
+export function ContactForm({ contact, onSubmit, onSuccess, onCancel }: Props) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
 
@@ -33,11 +34,7 @@ export function ContactForm({ contact, onSuccess, onCancel }: Props) {
     setError(null);
     startTransition(async () => {
       try {
-        if (contact) {
-          await updateContact(contact.id, form);
-        } else {
-          await createContact(form);
-        }
+        await onSubmit(form);
         onSuccess();
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Something went wrong");

@@ -1,6 +1,5 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { getAuthenticatedClient } from "@/lib/supabase-server";
 
 export type Contact = {
@@ -55,7 +54,6 @@ export async function createContact(formData: ContactFormData) {
   });
 
   if (error) throw error;
-  revalidatePath("/contacts");
 }
 
 export async function updateContact(id: string, formData: ContactFormData) {
@@ -73,7 +71,6 @@ export async function updateContact(id: string, formData: ContactFormData) {
     .eq("user_id", userId);
 
   if (error) throw error;
-  revalidatePath("/contacts");
 }
 
 export async function deleteContact(id: string) {
@@ -86,7 +83,6 @@ export async function deleteContact(id: string) {
     .eq("user_id", userId);
 
   if (error) throw error;
-  revalidatePath("/contacts");
 }
 
 export async function bulkImportContacts(
@@ -108,6 +104,5 @@ export async function bulkImportContacts(
 
   const { error } = await supabase.from("contacts").insert(rows);
   if (error) throw error;
-  revalidatePath("/contacts");
   return rows.length;
 }

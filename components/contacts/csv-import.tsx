@@ -2,11 +2,12 @@
 
 import { useRef, useState, useTransition } from "react";
 import { Upload, Download, FileText, FileSpreadsheet } from "lucide-react";
-import * as XLSX from "xlsx";
-import { bulkImportContacts } from "@/app/actions/contacts";
 import { cn } from "@/lib/utils";
 
+type ImportRow = { name: string; email: string; institution?: string; notes?: string };
+
 type Props = {
+  onImport: (rows: ImportRow[]) => Promise<number>;
   onSuccess: (count: number) => void;
   onCancel: () => void;
 };
@@ -31,7 +32,8 @@ function downloadCSVTemplate() {
   URL.revokeObjectURL(url);
 }
 
-function downloadXLSXTemplate() {
+async function downloadXLSXTemplate() {
+  const XLSX = await import("xlsx");
   const ws = XLSX.utils.aoa_to_sheet([HEADERS, ...SAMPLE_ROWS]);
   ws["!cols"] = HEADERS.map(() => ({ wch: 22 }));
   const wb = XLSX.utils.book_new();
@@ -60,7 +62,8 @@ function parseCSV(text: string): Array<Record<string, string>> {
   });
 }
 
-function parseXLSX(buffer: ArrayBuffer): Array<Record<string, string>> {
+async function parseXLSX(buffer: ArrayBuffer): Promise<Array<Record<string, string>>> {
+  const XLSX = await import("xlsx");
   const wb = XLSX.read(buffer, { type: "array" });
   const ws = wb.Sheets[wb.SheetNames[0]];
   const rows = XLSX.utils.sheet_to_json<Record<string, string>>(ws, { defval: "" });
@@ -69,7 +72,7 @@ function parseXLSX(buffer: ArrayBuffer): Array<Record<string, string>> {
   );
 }
 
-export function CSVImport({ onSuccess, onCancel }: Props) {
+export function CSVImport({ onImport, onSuccess, onCancel }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [preview, setPreview] = useState<Array<Record<string, string>>>([]);
   const [allRows, setAllRows] = useState<Array<Record<string, string>>>([]);
@@ -87,15 +90,19 @@ export function CSVImport({ onSuccess, onCancel }: Props) {
 
     if (isXLSX) {
       const reader = new FileReader();
-      reader.onload = (ev) => {
+      reader.onload = async (ev) => {
         const buffer = ev.target?.result as ArrayBuffer;
-        const rows = parseXLSX(buffer);
-        if (rows.length === 0) {
-          setError("No valid rows found. Make sure the first sheet has a header row.");
-          return;
+        try {
+          const rows = await parseXLSX(buffer);
+          if (rows.length === 0) {
+            setError("No valid rows found. Make sure the first sheet has a header row.");
+            return;
+          }
+          setAllRows(rows);
+          setPreview(rows.slice(0, 5));
+        } catch {
+          setError("Failed to parse Excel file.");
         }
-        setAllRows(rows);
-        setPreview(rows.slice(0, 5));
       };
       reader.readAsArrayBuffer(file);
     } else {
@@ -122,7 +129,7 @@ export function CSVImport({ onSuccess, onCancel }: Props) {
     }
     startTransition(async () => {
       try {
-        const count = await bulkImportContacts(parsed);
+        const count = await onImport(parsed);
         onSuccess(count);
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Import failed");

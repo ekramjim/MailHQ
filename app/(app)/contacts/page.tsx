@@ -1,8 +1,8 @@
 import { getContacts } from "@/app/actions/contacts";
-import { ContactsTable } from "@/components/contacts/contacts-table";
+import { ContactsView } from "@/components/contacts/contacts-view";
 
 export default async function ContactsPage() {
   const contacts = await getContacts();
 
-  return <ContactsTable initialContacts={contacts} />;
+  return <ContactsView fallbackData={contacts} />;
 }
