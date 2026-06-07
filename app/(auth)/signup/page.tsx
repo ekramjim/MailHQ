@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useFormState, useFormStatus } from "react-dom";
+import { useActionState } from "react";
+import { useFormStatus } from "react-dom";
 import { signup, type AuthState } from "@/app/actions/auth";
 
 const initialState: AuthState = {};
 
 export default function SignupPage() {
-  const [state, formAction] = useFormState(signup, initialState);
+  const [state, formAction] = useActionState(signup, initialState);
 
   return (
     <div className="card p-8 w-full max-w-sm flex flex-col gap-6">
