@@ -7,7 +7,7 @@ export default function PrivacyPage() {
       <section className="flex flex-col gap-8">
         <div>
           <h2 className="text-lg font-semibold mb-2">1. What we collect</h2>
-          <p>When you create an account, we receive your name and email address. We store the campaigns, contacts, and email sends you create while using MailHQ.</p>
+          <p>When you create an account, we receive your name and email address. We store the campaigns, contacts, sending settings, and email sends you create while using MailHQ.</p>
         </div>
 
         <div>

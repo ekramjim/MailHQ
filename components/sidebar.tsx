@@ -10,6 +10,7 @@ import {
   LayoutDashboard,
   Users,
   Mail,
+  Settings,
   LogOut,
 } from "lucide-react";
 
@@ -17,6 +18,7 @@ const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/contacts", label: "Contacts", icon: Users },
   { href: "/campaigns", label: "Campaigns", icon: Mail },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Sidebar({ user }: { user: User }) {

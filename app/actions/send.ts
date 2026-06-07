@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { resend } from "@/lib/resend";
+import { Resend } from "resend";
+import { decryptSecret } from "@/lib/encryption";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 type SendResult = {
@@ -17,6 +18,17 @@ type AttachmentPayload = {
   content: Buffer;
   contentType: string;
 };
+
+type UserSendingSettings = {
+  resend_api_key_encrypted: string;
+  resend_from_name: string;
+  resend_from_email: string;
+};
+
+function formatFromAddress(name: string, email: string) {
+  const cleanName = name.replace(/[<>"]/g, "").trim();
+  return cleanName ? `${cleanName} <${email}>` : email;
+}
 
 function applyPersonalization(body: string, contact: { name: string; email: string }) {
   const firstName = contact.name.split(" ")[0];
@@ -49,17 +61,30 @@ export async function sendCampaign(
   campaignId: string,
   drafts: Record<string, string>,
 ): Promise<{ results: SendResult[]; sent: number; failed: number }> {
-  if (!process.env.RESEND_API_KEY) {
-    throw new Error("RESEND_API_KEY is not configured.");
-  }
-
-  const from = process.env.RESEND_FROM_EMAIL ?? "MailHQ <onboarding@resend.dev>";
   const supabase = await createServerSupabaseClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Not authenticated");
+
+  const { data: settings, error: settingsError } = await supabase
+    .from("user_sending_settings")
+    .select("resend_api_key_encrypted, resend_from_name, resend_from_email")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
+  if (settingsError) throw settingsError;
+  if (!settings) {
+    throw new Error("Connect your Resend account in Settings before sending campaigns.");
+  }
+
+  const sendingSettings = settings as UserSendingSettings;
+  const resend = new Resend(decryptSecret(sendingSettings.resend_api_key_encrypted));
+  const from = formatFromAddress(
+    sendingSettings.resend_from_name,
+    sendingSettings.resend_from_email,
+  );
 
   const { data: campaign, error: campError } = await supabase
     .from("campaigns")

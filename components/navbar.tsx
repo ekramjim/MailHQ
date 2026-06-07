@@ -6,7 +6,7 @@ import type { User } from "@supabase/supabase-js";
 import { logout } from "@/app/actions/auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
-import { LayoutDashboard, Users, Mail, Paperclip, MessageSquare, LogOut } from "lucide-react";
+import { LayoutDashboard, Users, Mail, Paperclip, MessageSquare, Settings, LogOut } from "lucide-react";
 
 const navItems = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
@@ -14,6 +14,7 @@ const navItems = [
   { href: "/campaigns", label: "Campaigns", icon: Mail },
   { href: "/attachments", label: "Attachments", icon: Paperclip },
   { href: "/replies", label: "Replies", icon: MessageSquare },
+  { href: "/settings", label: "Settings", icon: Settings },
 ];
 
 export function Navbar({ user }: { user: User }) {

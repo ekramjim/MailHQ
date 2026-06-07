@@ -13,11 +13,11 @@ This document outlines the step-by-step build order for MailHQ, from project set
   - `NEXT_PUBLIC_SUPABASE_URL`
   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
   - `SUPABASE_SERVICE_ROLE_KEY`
-  - `RESEND_API_KEY`
+  - `SETTINGS_ENCRYPTION_KEY`
   - `ANTHROPIC_API_KEY`
 - Create client wrappers:
   - `lib/supabase.ts`
-  - `lib/resend.ts`
+  - `lib/encryption.ts`
   - `lib/anthropic.ts`
 - Set up ESLint, Prettier, and folder structure
 

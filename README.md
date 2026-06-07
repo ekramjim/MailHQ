@@ -86,10 +86,11 @@ Set up your environment variables by creating a `.env.local` file:
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-RESEND_API_KEY=your_resend_api_key
-RESEND_FROM_EMAIL="MailHQ <hello@yourdomain.com>"
+SETTINGS_ENCRYPTION_KEY=your_long_random_secret
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
+
+Each user connects their own Resend API key and verified sender email from the Settings page.
 
 Run the development server:
 
@@ -108,6 +109,7 @@ contacts (id, user_id, name, email, category, institution, notes, created_at)
 attachments (id, user_id, file_name, file_url, created_at)
 campaigns (id, user_id, name, subject, body, ai_generated, attachment_id, scheduled_at, created_at)
 sends (id, campaign_id, contact_id, status, opened_at, replied_at, outcome, created_at)
+user_sending_settings (user_id, resend_api_key_encrypted, resend_from_name, resend_from_email, created_at, updated_at)
 ```
 
 ---
@@ -123,12 +125,13 @@ mailhq/
 │   ├── dashboard/
 │   ├── contacts/
 │   ├── campaigns/
+│   ├── settings/
 │   ├── replies/
 │   └── attachments/
 ├── components/
 ├── lib/
 │   ├── supabase.ts
-│   ├── resend.ts
+│   ├── encryption.ts
 │   └── anthropic.ts
 └── api/
     ├── send/
