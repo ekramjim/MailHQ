@@ -16,7 +16,7 @@ const HEADERS = ["name", "email", "institution", "notes"];
 
 const SAMPLE_ROWS = [
   ["Jane Smith", "jane@mit.edu", "professor", "MIT", "Interested in ML research"],
-  ["John Doe", "john@google.com", "industry", "Google", ""],
+  ["John Doe", "john@example.com", "industry", "Example Co", ""],
   ["Sarah Lee", "sarah@stanford.edu", "researcher", "Stanford", "Works on NLP"],
 ];
 

@@ -7,7 +7,7 @@ export default function PrivacyPage() {
       <section className="flex flex-col gap-8">
         <div>
           <h2 className="text-lg font-semibold mb-2">1. What we collect</h2>
-          <p>When you sign in with Google, we receive your name and email address. We store the campaigns, contacts, and email sends you create while using MailHQ.</p>
+          <p>When you create an account, we receive your name and email address. We store the campaigns, contacts, and email sends you create while using MailHQ.</p>
         </div>
 
         <div>
@@ -21,7 +21,7 @@ export default function PrivacyPage() {
           <ul className="list-disc list-inside mt-2 flex flex-col gap-1 text-muted-foreground">
             <li>Supabase — database and authentication</li>
             <li>Resend — email delivery</li>
-            <li>Google OAuth — sign-in</li>
+            <li>Anthropic — AI drafting</li>
             <li>Vercel — hosting</li>
           </ul>
         </div>
@@ -33,7 +33,7 @@ export default function PrivacyPage() {
 
         <div>
           <h2 className="text-lg font-semibold mb-2">5. Contact</h2>
-          <p>For any privacy-related questions, contact us at <a href="mailto:mailhq2026@gmail.com" className="text-orange-500 hover:underline">mailhq2026@gmail.com</a>.</p>
+          <p>For any privacy-related questions, contact us at <a href="mailto:privacy@mailhq.app" className="text-orange-500 hover:underline">privacy@mailhq.app</a>.</p>
         </div>
       </section>
     </div>

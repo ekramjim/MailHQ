@@ -32,7 +32,7 @@ export default function TermsPage() {
 
         <div>
           <h2 className="text-lg font-semibold mb-2">6. Contact</h2>
-          <p>Questions? Reach us at <a href="mailto:mailhq2026@gmail.com" className="text-orange-500 hover:underline">mailhq2026@gmail.com</a>.</p>
+          <p>Questions? Reach us at <a href="mailto:support@mailhq.app" className="text-orange-500 hover:underline">support@mailhq.app</a>.</p>
         </div>
       </section>
     </div>

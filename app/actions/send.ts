@@ -1,6 +1,7 @@
 "use server";
 
-import { google } from "googleapis";
+import { revalidatePath } from "next/cache";
+import { resend } from "@/lib/resend";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 type SendResult = {
@@ -11,100 +12,74 @@ type SendResult = {
   error?: string;
 };
 
-function buildEmail({
-  from, to, subject, body, attachment,
-}: {
-  from: string;
-  to: string;
-  subject: string;
-  body: string;
-  attachment?: { name: string; mimeType: string; data: string };
-}) {
-  const boundary = "mailhq_boundary_" + Date.now();
+type AttachmentPayload = {
+  filename: string;
+  content: Buffer;
+  contentType: string;
+};
 
-  if (!attachment) {
-    const message = [
-      `From: ${from}`,
-      `To: ${to}`,
-      `Subject: ${subject}`,
-      `MIME-Version: 1.0`,
-      `Content-Type: text/plain; charset=utf-8`,
-      ``,
-      body,
-    ].join("\r\n");
-    return Buffer.from(message).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+function applyPersonalization(body: string, contact: { name: string; email: string }) {
+  const firstName = contact.name.split(" ")[0];
+
+  return body
+    .replace(/\{\{name\}\}/gi, contact.name)
+    .replace(/\{\{first_name\}\}/gi, firstName)
+    .replace(/\{\{email\}\}/gi, contact.email);
+}
+
+async function getAttachmentPayload(
+  attachment: { file_name: string; file_url: string; mime_type: string | null } | null,
+): Promise<AttachmentPayload | undefined> {
+  if (!attachment) return undefined;
+
+  const response = await fetch(attachment.file_url);
+  if (!response.ok) {
+    throw new Error(`Could not fetch attachment ${attachment.file_name}.`);
   }
 
-  const message = [
-    `From: ${from}`,
-    `To: ${to}`,
-    `Subject: ${subject}`,
-    `MIME-Version: 1.0`,
-    `Content-Type: multipart/mixed; boundary="${boundary}"`,
-    ``,
-    `--${boundary}`,
-    `Content-Type: text/plain; charset=utf-8`,
-    ``,
-    body,
-    ``,
-    `--${boundary}`,
-    `Content-Type: ${attachment.mimeType}; name="${attachment.name}"`,
-    `Content-Disposition: attachment; filename="${attachment.name}"`,
-    `Content-Transfer-Encoding: base64`,
-    ``,
-    attachment.data,
-    ``,
-    `--${boundary}--`,
-  ].join("\r\n");
-
-  return Buffer.from(message).toString("base64").replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  const buffer = Buffer.from(await response.arrayBuffer());
+  return {
+    filename: attachment.file_name,
+    content: buffer,
+    contentType: attachment.mime_type ?? "application/octet-stream",
+  };
 }
 
 export async function sendCampaign(
   campaignId: string,
-  drafts: Record<string, string>
+  drafts: Record<string, string>,
 ): Promise<{ results: SendResult[]; sent: number; failed: number }> {
-  const supabase = await createServerSupabaseClient();
-
-  // Use getUser() for server-side token validation instead of getSession()
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not authenticated");
-
-  const { data: { session } } = await supabase.auth.getSession();
-  const providerToken = session?.provider_token;
-  if (!providerToken) throw new Error("Gmail access not granted. Please sign out and sign back in with Google.");
-
-  const senderEmail = user.email!;
-  const senderName = user.user_metadata?.full_name || senderEmail;
-
-  const oauth2Client = new google.auth.OAuth2();
-  oauth2Client.setCredentials({ access_token: providerToken });
-  const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-
-  const { data: campaign, error: campError } = await supabase
-    .from("campaigns").select("*, attachments(file_name, file_url, mime_type)").eq("id", campaignId).single();
-  if (campError) throw campError;
-
-  // Fetch attachment file if present
-  let attachmentPayload: { name: string; mimeType: string; data: string } | undefined;
-  if (campaign.attachment_id && campaign.attachments) {
-    const att = campaign.attachments as { file_name: string; file_url: string; mime_type: string | null };
-    try {
-      const res = await fetch(att.file_url);
-      const buffer = await res.arrayBuffer();
-      attachmentPayload = {
-        name: att.file_name,
-        mimeType: att.mime_type ?? "application/octet-stream",
-        data: Buffer.from(buffer).toString("base64"),
-      };
-    } catch {
-      // Send without attachment if fetch fails
-    }
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("RESEND_API_KEY is not configured.");
   }
 
+  const from = process.env.RESEND_FROM_EMAIL ?? "MailHQ <onboarding@resend.dev>";
+  const supabase = await createServerSupabaseClient();
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Not authenticated");
+
+  const { data: campaign, error: campError } = await supabase
+    .from("campaigns")
+    .select("*, attachments(file_name, file_url, mime_type)")
+    .eq("id", campaignId)
+    .eq("user_id", user.id)
+    .single();
+  if (campError) throw campError;
+
+  const attachment = await getAttachmentPayload(
+    campaign.attachment_id
+      ? (campaign.attachments as { file_name: string; file_url: string; mime_type: string | null } | null)
+      : null,
+  );
+
   const { data: sends, error: sendsError } = await supabase
-    .from("sends").select("*, contacts(name, email)")
-    .eq("campaign_id", campaignId).eq("status", "pending");
+    .from("sends")
+    .select("*, contacts(name, email)")
+    .eq("campaign_id", campaignId)
+    .eq("status", "pending");
   if (sendsError) throw sendsError;
   if (!sends || sends.length === 0) throw new Error("No pending recipients found.");
 
@@ -115,24 +90,31 @@ export async function sendCampaign(
     const contact = send.contacts as { name: string; email: string } | null;
     if (!contact) continue;
 
-    const rawBody = drafts[send.contact_id] ?? campaign.body;
-    const firstName = contact.name.split(" ")[0];
-    const body = rawBody
-      .replace(/\{\{name\}\}/gi, contact.name)
-      .replace(/\{\{first_name\}\}/gi, firstName)
-      .replace(/\{\{email\}\}/gi, contact.email);
+    const body = applyPersonalization(drafts[send.contact_id] ?? campaign.body, contact);
 
     try {
-      const raw = buildEmail({
-        from: `${senderName} <${senderEmail}>`,
+      const { error } = await resend.emails.send({
+        from,
         to: contact.email,
         subject: campaign.subject,
-        body,
-        attachment: attachmentPayload,
+        text: body,
+        replyTo: user.email ? [user.email] : undefined,
+        attachments: attachment ? [attachment] : undefined,
+        tags: [
+          { name: "campaign_id", value: campaignId },
+          { name: "send_id", value: send.id },
+        ],
       });
-      await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
+
+      if (error) throw new Error(error.message);
+
       successIds.push(send.id);
-      results.push({ contactId: send.contact_id, name: contact.name, email: contact.email, success: true });
+      results.push({
+        contactId: send.contact_id,
+        name: contact.name,
+        email: contact.email,
+        success: true,
+      });
     } catch (err: unknown) {
       results.push({
         contactId: send.contact_id,
@@ -144,21 +126,24 @@ export async function sendCampaign(
     }
   }
 
-  // Batch update all successful sends in one query
   if (successIds.length > 0) {
     await supabase.from("sends").update({ status: "sent" }).in("id", successIds);
   }
 
-  const sent = results.filter((r) => r.success).length;
-  const failed = results.filter((r) => !r.success).length;
+  const sent = results.filter((result) => result.success).length;
+  const failed = results.filter((result) => !result.success).length;
 
   if (sent > 0) {
-    // Only mark fully sent if every pending send was processed successfully (none skipped or failed)
-    const allProcessed = results.length === sends.length && results.every((r) => r.success);
-    await supabase.from("campaigns")
+    const allProcessed = results.length === sends.length && results.every((result) => result.success);
+    await supabase
+      .from("campaigns")
       .update({ status: allProcessed ? "sent" : "draft" })
-      .eq("id", campaignId);
+      .eq("id", campaignId)
+      .eq("user_id", user.id);
   }
+
+  revalidatePath(`/campaigns/${campaignId}`);
+  revalidatePath("/campaigns");
 
   return { results, sent, failed };
 }

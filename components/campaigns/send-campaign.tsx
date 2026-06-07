@@ -102,7 +102,7 @@ export function SendCampaign({ campaignId, recipients, drafts }: Props) {
           <div className="relative bg-card border border-border rounded-2xl shadow-lg w-full max-w-sm p-6 flex flex-col gap-4">
             <h2 className="text-lg font-medium font-heading">Send campaign?</h2>
             <p className="text-sm text-muted-foreground">
-              This will send emails to <span className="font-medium text-foreground">{pendingRecipients.length} recipients</span> from your Gmail account. This cannot be undone.
+              This will send emails to <span className="font-medium text-foreground">{pendingRecipients.length} recipients</span> via MailHQ. This cannot be undone.
             </p>
             <div className="flex justify-end gap-2">
               <button className="btn-secondary" onClick={() => setShowConfirm(false)}>Cancel</button>

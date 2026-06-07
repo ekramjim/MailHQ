@@ -48,8 +48,7 @@ export async function middleware(request: NextRequest) {
     request.nextUrl.pathname.startsWith("/signup");
 
   const isPublicPage =
-    request.nextUrl.pathname === "/" ||
-    request.nextUrl.pathname.startsWith("/auth/callback");
+    request.nextUrl.pathname === "/";
 
   if (!user && !isAuthPage && !isPublicPage) {
     return NextResponse.redirect(new URL("/login", request.url));
