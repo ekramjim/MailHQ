@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { anthropic } from "@/lib/anthropic";
+import { genAI } from "@/lib/gemini";
 import { createServerSupabaseClient } from "@/lib/supabase-server";
 
 const DAILY_LIMIT = 50;
@@ -56,16 +56,11 @@ Rewrite the email to feel personal and genuine for this specific recipient.
 - Return ONLY the email body text`;
 
   try {
-    const result = await anthropic.messages.create({
-      model: process.env.ANTHROPIC_MODEL ?? "claude-3-5-sonnet-latest",
-      max_tokens: 1200,
-      messages: [{ role: "user", content: prompt }],
+    const model = genAI.getGenerativeModel({
+      model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
     });
-    const draft = result.content
-      .filter((block) => block.type === "text")
-      .map((block) => block.text)
-      .join("\n")
-      .trim();
+    const result = await model.generateContent(prompt);
+    const draft = result.response.text().trim();
 
     if (!draft) throw new Error("AI generation returned an empty draft.");
 

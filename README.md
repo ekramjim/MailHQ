@@ -49,7 +49,7 @@ Built for targeted outreach: emailing professors for research opportunities, pit
 | Auth | Supabase Auth |
 | File Storage | Supabase Storage |
 | Email Sending | Resend (per-user API key) |
-| AI | Anthropic API (Claude) |
+| AI | Google Gemini API |
 | Deployment | Vercel |
 
 ---
@@ -60,7 +60,7 @@ Built for targeted outreach: emailing professors for research opportunities, pit
 
 - Node.js 18+
 - A [Supabase](https://supabase.com) project
-- An [Anthropic](https://console.anthropic.com) API key
+- A [Google Gemini](https://aistudio.google.com/app/apikey) API key
 - A [Resend](https://resend.com) account (each user connects their own)
 
 ### 1. Clone and install
@@ -80,14 +80,24 @@ NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 SETTINGS_ENCRYPTION_KEY=a_long_random_secret_string
-ANTHROPIC_API_KEY=your_anthropic_api_key
+GEMINI_API_KEY=your_gemini_api_key
 ```
 
 > `SETTINGS_ENCRYPTION_KEY` is used to encrypt each user's Resend API key before storing it in the database. Use any long random string (32+ characters).
 
 ### 3. Database setup
 
-Run the migrations in `supabase/migrations/` against your Supabase project, or apply them manually via the Supabase SQL editor. The schema includes:
+Install the [Supabase CLI](https://supabase.com/docs/guides/cli), link your project, and push the migrations:
+
+```bash
+supabase login
+supabase link --project-ref <your-project-ref>
+supabase db push
+```
+
+Or apply the SQL files in `supabase/migrations/` manually via the Supabase SQL editor, in filename order.
+
+The schema includes:
 
 ```
 contacts               — contact list per user
@@ -99,7 +109,11 @@ user_sending_settings  — encrypted Resend API key and sender details per user
 
 Row Level Security (RLS) is enabled on all tables — users can only access their own data.
 
-### 4. Run the dev server
+### 4. Supabase Storage
+
+In the Supabase dashboard, create a storage bucket named `attachments`. Set it to **public** (files are served via public URL for email delivery).
+
+### 5. Run the dev server
 
 ```bash
 npm run dev
