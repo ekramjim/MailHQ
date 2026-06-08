@@ -81,8 +81,50 @@ export function SendingSettingsForm({ settings }: Props) {
             />
           </label>
 
-          <div className="rounded-lg border border-border bg-card p-3 text-xs text-muted-foreground leading-relaxed">
-            The sender email must be verified in your Resend account. API keys are encrypted before storage.
+          <div className="rounded-lg border border-border bg-muted/40 p-4 flex flex-col gap-3 text-xs text-muted-foreground leading-relaxed">
+            <p className="font-medium text-foreground text-sm">How to set up Resend</p>
+            <ol className="flex flex-col gap-2 list-decimal list-inside">
+              <li>
+                Create a free account at{" "}
+                <a
+                  href="https://resend.com/signup"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-foreground hover:text-primary"
+                >
+                  resend.com/signup
+                </a>
+              </li>
+              <li>
+                Go to{" "}
+                <a
+                  href="https://resend.com/domains"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-foreground hover:text-primary"
+                >
+                  Domains
+                </a>{" "}
+                and add your domain, then add the DNS records shown to your domain provider and wait for verification (usually a few minutes)
+              </li>
+              <li>
+                Go to{" "}
+                <a
+                  href="https://resend.com/api-keys"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline text-foreground hover:text-primary"
+                >
+                  API Keys
+                </a>{" "}
+                and create a new key — copy it and paste it above
+              </li>
+              <li>
+                Set the sender email to an address on your verified domain, e.g.{" "}
+                <span className="font-mono text-foreground">hello@yourdomain.com</span>
+              </li>
+            </ol>
+            <p className="text-muted-foreground">Your API key is encrypted before being stored.</p>
           </div>
 
           {state.error && <p className="text-sm text-destructive">{state.error}</p>}

@@ -1,43 +1,40 @@
 # MailHQ
 
-MailHQ is a personal outreach management app that lets you organise contacts, write and send bulk emails, personalise each email with AI, and track everything from opens to replies in one dashboard.
+MailHQ is a personal outreach management app. Organise contacts, write and send bulk emails, personalise each message with AI, and track opens, clicks, and replies — all in one place.
 
-Built for anyone doing targeted outreach -- whether you're emailing professors for research opportunities, pitching clients, or running cold outreach campaigns.
+Built for targeted outreach: emailing professors for research opportunities, pitching clients, cold outreach campaigns, and more.
 
 ---
 
 ## Features
 
-### Contacts
-- Add contacts manually or import in bulk via CSV
-- Tag and categorise contacts (e.g. bioinformatics professor, SaaS client, startup founder)
+**Contacts**
+- Add contacts manually or bulk import via CSV
+- Tag contacts by category (e.g. professor, client, founder)
 - Add notes per contact for context
 
-### Campaigns
+**Campaigns**
 - Create campaigns with a subject line and email body
-- Write your own email or use AI to draft and personalise it per recipient
-- Target a specific contact category or hand-pick recipients
-- Attach files like your CV or pitch deck, reusable across campaigns
-- Schedule campaigns to send at a specific time
+- Target a contact category or hand-pick individual recipients
+- Attach reusable files (CV, pitch deck, etc.) to campaigns
 
-### AI Compose
-- AI drafts a personalised version of your email for each recipient based on their name, role, and institution
-- Review and edit each draft before sending, or bulk approve and send
-- Use AI to refine emails you wrote yourself -- adjust tone, shorten, or improve clarity
+**AI Compose**
+- AI (Claude) drafts a personalised version of your email for each recipient
+- Review and edit each draft individually before sending, or bulk approve
+- Use AI to refine emails you wrote yourself — adjust tone, shorten, or improve clarity
 
-### Sending
-- Bulk send to all contacts in a campaign via Resend
+**Sending**
+- Bulk send to all campaign recipients via Resend
 - Each recipient gets their own personalised email
-- Attachments sent automatically with each email
+- Attachments delivered automatically with each email
 
-### Tracking
+**Tracking**
 - Track opens, clicks, and replies per campaign and per contact
-- Manually mark reply outcomes -- interested, meeting booked, not interested, no response
-- Full send history per contact so you know exactly what you sent and when
+- Manually mark reply outcomes: Interested, Meeting Booked, Not Interested, No Response
 
-### Dashboard
-- Overview of all campaigns with key stats -- sent, open rate, reply rate
-- Breakdown by category (e.g. 50 bioinformatics professors emailed, 7 replied)
+**Dashboard**
+- Overview stats: total sent, open rate, reply rate
+- Breakdown by contact category
 - Visual charts for sends by category and the reply funnel
 
 ---
@@ -46,12 +43,12 @@ Built for anyone doing targeted outreach -- whether you're emailing professors f
 
 | Layer | Technology |
 |---|---|
-| Frontend | Next.js 14 (App Router) |
-| Styling | Tailwind CSS + shadcn/ui |
+| Framework | Next.js 15 (App Router) |
+| Styling | Tailwind CSS |
 | Database | Supabase (PostgreSQL) |
 | Auth | Supabase Auth |
 | File Storage | Supabase Storage |
-| Email Sending | Resend |
+| Email Sending | Resend (per-user API key) |
 | AI | Anthropic API (Claude) |
 | Deployment | Vercel |
 
@@ -60,57 +57,68 @@ Built for anyone doing targeted outreach -- whether you're emailing professors f
 ## Getting Started
 
 ### Prerequisites
+
 - Node.js 18+
-- A Supabase project
-- A Resend account
-- An Anthropic API key
+- A [Supabase](https://supabase.com) project
+- An [Anthropic](https://console.anthropic.com) API key
+- A [Resend](https://resend.com) account (each user connects their own)
 
-### Installation
-
-Clone the repository:
+### 1. Clone and install
 
 ```bash
 git clone https://github.com/yourusername/mailhq.git
 cd mailhq
-```
-
-Install dependencies:
-
-```bash
 npm install
 ```
 
-Set up your environment variables by creating a `.env.local` file:
+### 2. Environment variables
+
+Create a `.env.local` file in the root:
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-SETTINGS_ENCRYPTION_KEY=your_long_random_secret
+SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
+SETTINGS_ENCRYPTION_KEY=a_long_random_secret_string
 ANTHROPIC_API_KEY=your_anthropic_api_key
 ```
 
-Each user connects their own Resend API key and verified sender email from the Settings page.
+> `SETTINGS_ENCRYPTION_KEY` is used to encrypt each user's Resend API key before storing it in the database. Use any long random string (32+ characters).
 
-Run the development server:
+### 3. Database setup
+
+Run the migrations in `supabase/migrations/` against your Supabase project, or apply them manually via the Supabase SQL editor. The schema includes:
+
+```
+contacts               — contact list per user
+attachments            — uploaded files (CV, pitch deck, etc.)
+campaigns              — email campaigns
+sends                  — per-recipient send records with status and tracking
+user_sending_settings  — encrypted Resend API key and sender details per user
+```
+
+Row Level Security (RLS) is enabled on all tables — users can only access their own data.
+
+### 4. Run the dev server
 
 ```bash
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000).
 
 ---
 
-## Database Schema
+## Connecting Resend (per user)
 
-```sql
-contacts (id, user_id, name, email, category, institution, notes, created_at)
-attachments (id, user_id, file_name, file_url, created_at)
-campaigns (id, user_id, name, subject, body, ai_generated, attachment_id, scheduled_at, created_at)
-sends (id, campaign_id, contact_id, status, opened_at, replied_at, outcome, created_at)
-user_sending_settings (user_id, resend_api_key_encrypted, resend_from_name, resend_from_email, created_at, updated_at)
-```
+Each user connects their own Resend account from the **Settings** page. Here's how:
+
+1. Sign up at [resend.com/signup](https://resend.com/signup)
+2. Go to [Domains](https://resend.com/domains), add your domain, and add the DNS records shown — verification usually takes a few minutes
+3. Go to [API Keys](https://resend.com/api-keys) and create a new key
+4. In MailHQ Settings, enter your sender name, a verified sender email (e.g. `hello@yourdomain.com`), and your API key
+
+API keys are encrypted before being stored.
 
 ---
 
@@ -119,42 +127,25 @@ user_sending_settings (user_id, resend_api_key_encrypted, resend_from_name, rese
 ```
 mailhq/
 ├── app/
-│   ├── (auth)/
-│   │   ├── login/
-│   │   └── signup/
-│   ├── dashboard/
-│   ├── contacts/
-│   ├── campaigns/
-│   ├── settings/
-│   ├── replies/
-│   └── attachments/
-├── components/
-├── lib/
-│   ├── supabase.ts
-│   ├── encryption.ts
-│   └── anthropic.ts
-└── api/
-    ├── send/
-    ├── ai-draft/
-    └── webhooks/resend/
+│   ├── (auth)/          — login and signup pages
+│   ├── (app)/           — protected app routes
+│   │   ├── dashboard/
+│   │   ├── contacts/
+│   │   ├── campaigns/
+│   │   ├── attachments/
+│   │   ├── replies/
+│   │   └── settings/
+│   └── api/
+│       └── ai-draft/    — Claude AI draft generation endpoint
+├── components/          — shared UI components
+├── lib/                 — Supabase client, encryption, Anthropic client
+├── supabase/
+│   └── migrations/      — database migration files
+└── types/               — shared TypeScript types
 ```
-
----
-
-## Roadmap
-
-- [ ] Contact import via CSV
-- [ ] Campaign builder with rich text editor
-- [ ] AI personalised drafts per recipient
-- [ ] Bulk send via Resend
-- [ ] Open and click tracking via Resend webhooks
-- [ ] Reply outcome tracking
-- [ ] Dashboard with charts
-- [ ] Scheduled sending
-- [ ] Follow-up reminders
 
 ---
 
 ## Built by
 
-[LynkSphere](https://lynksphere.com.au) -- Melbourne-based software studio.
+[LynkSphere](https://lynksphere.com.au) — Melbourne-based software studio.
