@@ -158,8 +158,3 @@ mailhq/
 └── types/               — shared TypeScript types
 ```
 
----
-
-## Built by
-
-[LynkSphere](https://lynksphere.com.au) — Melbourne-based software studio.
