@@ -57,7 +57,7 @@ Rewrite the email to feel personal and genuine for this specific recipient.
 
   try {
     const model = genAI.getGenerativeModel({
-      model: process.env.GEMINI_MODEL ?? "gemini-2.0-flash",
+      model: process.env.GEMINI_MODEL ?? "gemini-2.5-flash",
     });
     const result = await model.generateContent(prompt);
     const draft = result.response.text().trim();
